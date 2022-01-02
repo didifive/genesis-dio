@@ -1,6 +1,14 @@
 let order = [];
 let clickedOrder = [];
 let score = 0;
+let record = localStorage.getItem('record');
+const audio = [
+    new Audio('assets/1.mp3')
+    , new Audio('assets/2.mp3')
+    , new Audio('assets/3.mp3')
+    , new Audio('assets/4.mp3')
+];
+const audioError = new Audio('assets/error.mp3');
 
 //0 - verde
 //1 - vermelho
@@ -12,6 +20,9 @@ const red = document.querySelector('.red');
 const green = document.querySelector('.green');
 const yellow = document.querySelector('.yellow');
 
+const playButton = document.querySelector('#play');
+const resetRecord = document.querySelector('#reset');
+
 //cria ordem aletoria de cores
 let shuffleOrder = () => {
     let colorOrder = Math.floor(Math.random() * 4);
@@ -20,19 +31,20 @@ let shuffleOrder = () => {
 
     for(let i in order) {
         let elementColor = createColorElement(order[i]);
-        lightColor(elementColor, Number(i) + 1);
+        lightColor(elementColor, Number(i) + 1, order[i]);
     }
 }
 
 //acende a proxima cor
-let lightColor = (element, number) => {
-    number = number * 500;
+let lightColor = (e, n, color) => {
+    const number = n * 700;
     setTimeout(() => {
-        element.classList.add('selected');
-    }, number - 250);
+        audio[color].play();
+        e.classList.add('selected');
+    }, number - 450);
     setTimeout(() => {
-        element.classList.remove('selected');
-    });
+        e.classList.remove('selected');
+    }, number);
 }
 
 //checa se os botoes clicados são os mesmos da ordem gerada no jogo
@@ -44,7 +56,8 @@ let checkOrder = () => {
         }
     }
     if(clickedOrder.length == order.length) {
-        alert(`Pontuação: ${score}\nVocê acertou! Iniciando próximo nível!`);
+        alert(`Pontuação atual: ${score}\nVocê acertou! Iniciando próximo nível!`);
+        updateRecord();
         nextLevel();
     }
 }
@@ -53,6 +66,7 @@ let checkOrder = () => {
 let click = (color) => {
     clickedOrder[clickedOrder.length] = color;
     createColorElement(color).classList.add('selected');
+    audio[color].play();
 
     setTimeout(() => {
         createColorElement(color).classList.remove('selected');
@@ -60,16 +74,32 @@ let click = (color) => {
     },250);
 }
 
+let control = (control) => {
+    switch (control) {
+        case 'play':
+            playGame();
+            break;
+        case 'reset':
+            localStorage.clear();
+            updateRecord();
+            break;
+        default:
+            alert('Um erro ocorreu, o game será recarregado!');
+            location.reload(true);
+    }
+}
+
 //funcao que retorna a cor
 let createColorElement = (color) => {
-    if(color == 0) {
-        return green;
-    } else if(color == 1) {
-        return red;
-    } else if (color == 2) {
-        return yellow;
-    } else if (color == 3) {
-        return blue;
+    switch (color) {
+        case 0: return green;
+        case 1: return red;
+        case 2: return yellow;
+        case 3: return blue;
+        default: 
+            alert('Um erro ocorreu, o game será recarregado!');
+            location.reload(true);
+            return;
     }
 }
 
@@ -81,19 +111,23 @@ let nextLevel = () => {
 
 //funcao para game over
 let gameOver = () => {
+    audioError.play();
     alert(`Pontuação: ${score}!\nVocê perdeu o jogo!\nClique em OK para iniciar um novo jogo`);
     order = [];
     clickedOrder = [];
-
-    playGame();
 }
 
 //funcao de inicio do jogo
 let playGame = () => {
     alert('Bem vindo ao Gênesis! Iniciando novo jogo!');
     score = 0;
-
     nextLevel();
+}
+
+//atualizar o Recorde
+let updateRecord = () => {
+    if(score > record) localStorage.setItem('record', score);
+    document.getElementById('record').innerHTML = (record) ? record : 0;
 }
 
 //eventos de clique para as cores
@@ -101,7 +135,9 @@ green.onclick = () => click(0);
 red.onclick = () => click(1);
 yellow.onclick = () => click(2);
 blue.onclick = () => click(3);
+playButton.onclick = () => control('play');
+resetRecord.onclick = () => control('reset');
 
 
-//inicio do jogo
-playGame();
+//Evento ao carregar a página
+updateRecord();
