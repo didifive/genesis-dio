@@ -1,7 +1,3 @@
-let order = [];
-let clickedOrder = [];
-let score = 0;
-let record = localStorage.getItem('record');
 const audio = [
     new Audio('assets/1.mp3')
     , new Audio('assets/2.mp3')
@@ -10,11 +6,15 @@ const audio = [
 ];
 const audioError = new Audio('assets/error.mp3');
 
+let order = [];
+let clickedOrder = [];
+let score = 0;
+let record = localStorage.getItem('record');
+
 //0 - verde
 //1 - vermelho
 //2 - amarelo
 //3 - azul
-
 const blue = document.querySelector('.blue');
 const red = document.querySelector('.red');
 const green = document.querySelector('.green');
@@ -36,14 +36,14 @@ let shuffleOrder = () => {
 }
 
 //acende a proxima cor
-let lightColor = (e, n, color) => {
-    const number = n * 700;
+let lightColor = (elementColor, number, color) => {
+    number = number * 600;
     setTimeout(() => {
         audio[color].play();
-        e.classList.add('selected');
-    }, number - 450);
+        elementColor.classList.add('selected');
+    }, number - 400);
     setTimeout(() => {
-        e.classList.remove('selected');
+        elementColor.classList.remove('selected');
     }, number);
 }
 
@@ -112,14 +112,18 @@ let nextLevel = () => {
 //funcao para game over
 let gameOver = () => {
     audioError.play();
-    alert(`Pontuação: ${score}!\nVocê perdeu o jogo!\nClique em OK para iniciar um novo jogo`);
-    order = [];
-    clickedOrder = [];
+    alert(`Você perdeu o jogo!
+            \nPontuação: ${score}!
+            \nSeu Recorde: ${record}!
+            \nClique em OK para iniciar um novo jogo.`
+    );
 }
 
 //funcao de inicio do jogo
 let playGame = () => {
     alert('Bem vindo ao Gênesis! Iniciando novo jogo!');
+    order = [];
+    clickedOrder = [];
     score = 0;
     nextLevel();
 }
@@ -137,7 +141,6 @@ yellow.onclick = () => click(2);
 blue.onclick = () => click(3);
 playButton.onclick = () => control('play');
 resetRecord.onclick = () => control('reset');
-
 
 //Evento ao carregar a página
 updateRecord();

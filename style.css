@@ -5,7 +5,7 @@ body {
 }
 
 .main-game {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 100px);
     width: 100vw;
     display: flex;
     justify-content: center;
@@ -60,7 +60,19 @@ header {
     flex-direction: row;
     height: 60px;
     justify-content: center;
-    margin-left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+footer {
+    align-items: center;
+    display:flex;
+    flex-direction: row;
+    height: 40px;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
     width: 100%;
 }
 
@@ -70,7 +82,6 @@ nav ul {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    width: 100%;
 }
 
 nav li {

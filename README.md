@@ -43,6 +43,11 @@ Abaixo seguem modificações feitas em relação ao projeto base:
 
 ---
 
+Projeto online em: [genius-didi.netlify.app](https://genius-didi.netlify.app)  
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6f4aaf16-8c1f-43a8-bcd6-896631a54fbf/deploy-status)](https://app.netlify.com/sites/genius-didi/deploys)
+
+---
+
 Links Interessantes:
 * [HTML5]
 * [CSS]
