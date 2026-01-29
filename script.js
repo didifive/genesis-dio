@@ -1,9 +1,26 @@
 // Constantes do jogo
-const COLOR_ANIMATION_TIME = 600; // Duração de cada animação de cor (ms)
+const COLOR_ANIMATION_TIME = 700; // Duração de cada animação de cor (ms)
 const AUDIO_DELAY = 400; // Delay antes de tocar o áudio (ms)
-const CLICK_FEEDBACK_TIME = 250; // Duração do feedback visual do clique (ms)
+const CLICK_FEEDBACK_TIME = 350; // Duração do feedback visual do clique (ms)
 const SEQUENCE_END_BUFFER = 200; // Tempo extra após sequência terminar (ms)
+const NEXT_LEVEL_DELAY = 500; // Delay antes de iniciar próximo nível (ms)
+const GAME_OVER_MODAL_DELAY = 300; // Delay antes de mostrar modal de game over (ms)
 const TOTAL_COLORS = 4; // Número total de cores no jogo
+
+// Constantes para tamanho da fonte
+const FONT_SIZE_CONFIG = {
+    twoDigits: 'clamp(1.5rem, 12vmin, 3.5rem)',
+    threeDigits: 'clamp(1.2rem, 10vmin, 2.8rem)',
+    fourDigits: 'clamp(0.9rem, 8vmin, 2rem)',
+    manyDigits: 'clamp(0.7rem, 6vmin, 1.5rem)'
+};
+
+// Função para gerar número aleatório seguro
+const getRandomColor = () => {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] % TOTAL_COLORS;
+};
 
 const audio = [
     new Audio('assets/1.mp3')
@@ -16,7 +33,7 @@ const audioError = new Audio('assets/error.mp3');
 let order = [];
 let clickedOrder = [];
 let score = 0;
-let isPlaying = false;
+let isPlaying = true; // Controla se está tocando sequência ou se jogo não foi iniciado (bloqueia cliques)
 
 //0 - verde
 //1 - vermelho
@@ -39,7 +56,7 @@ const recordDisplay = document.getElementById('record');
 
 //cria ordem aletoria de cores
 let shuffleOrder = () => {
-    let randomColorIndex = Math.floor(Math.random() * TOTAL_COLORS);
+    let randomColorIndex = getRandomColor();
     order.push(randomColorIndex);
     clickedOrder = [];
 
@@ -80,13 +97,13 @@ let checkOrder = () => {
         updateScoreDisplay();
         setTimeout(() => {
             shuffleOrder();
-        }, 500);
+        }, NEXT_LEVEL_DELAY);
     }
 }
 
 //funcao para o clique do usuario
 let click = (color) => {
-    if(isPlaying) return; // Impede cliques durante a sequência
+    if(isPlaying) return; // Impede cliques enquanto sequência toca ou jogo não iniciou
     
     clickedOrder.push(color);
     createColorElement(color).classList.add('selected');
@@ -138,13 +155,13 @@ let adjustScoreFontSize = (value) => {
     let fontSize;
     
     if (numDigits <= 2) {
-        fontSize = 'clamp(1.5rem, 12vmin, 3.5rem)';
+        fontSize = FONT_SIZE_CONFIG.twoDigits;
     } else if (numDigits === 3) {
-        fontSize = 'clamp(1.2rem, 10vmin, 2.8rem)';
+        fontSize = FONT_SIZE_CONFIG.threeDigits;
     } else if (numDigits === 4) {
-        fontSize = 'clamp(0.9rem, 8vmin, 2rem)';
+        fontSize = FONT_SIZE_CONFIG.fourDigits;
     } else {
-        fontSize = 'clamp(0.7rem, 6vmin, 1.5rem)';
+        fontSize = FONT_SIZE_CONFIG.manyDigits;
     }
     
     scoreLevel.style.fontSize = fontSize;
@@ -171,12 +188,12 @@ let closeGameOverModal = () => {
 
 //funcao para game over
 let gameOver = () => {
-    isPlaying = false;
+    isPlaying = true; // Bloqueia cliques novamente
     updateRecord();
     audioError.play();
     setTimeout(() => {
         showGameOverModal();
-    }, 300);
+    }, GAME_OVER_MODAL_DELAY);
 }
 
 //funcao de inicio do jogo
@@ -184,7 +201,6 @@ let playGame = () => {
     order = [];
     clickedOrder = [];
     score = 0;
-    isPlaying = false;
     updateScoreDisplay();
     shuffleOrder();
 }
