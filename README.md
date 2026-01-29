@@ -20,13 +20,16 @@ Projeto desenvolvido com instruções de [Gabriela Pinheiro] na trilha de estudo
 
 <p align="center">
   <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Introduction">
-	  <img alt="Java" src="https://img.shields.io/static/v1?color=yellow&label=Dev&message=JavaScript&style=for-the-badge&logo=Javascript">
+	  <img alt="JavaScript" src="https://img.shields.io/static/v1?color=yellow&label=Dev&message=JavaScript&style=for-the-badge&logo=Javascript">
 	</a>
   <a href="https://www.w3schools.com/html/">
-	  <img alt="Java" src="https://img.shields.io/static/v1?color=red&label=Dev&message=HTML5&style=for-the-badge&logo=HTML5">
+	  <img alt="HTML5" src="https://img.shields.io/static/v1?color=red&label=Dev&message=HTML5&style=for-the-badge&logo=HTML5">
 	</a>
   <a href="https://www.w3schools.com/css/">
-	  <img alt="Java" src="https://img.shields.io/static/v1?color=blue&label=Dev&message=CSS&style=for-the-badge&logo=CSS3">
+	  <img alt="CSS3" src="https://img.shields.io/static/v1?color=blue&label=Dev&message=CSS3&style=for-the-badge&logo=CSS3">
+	</a>
+  <a href="https://getbootstrap.com/">
+	  <img alt="Bootstrap" src="https://img.shields.io/static/v1?color=purple&label=Dev&message=Bootstrap&style=for-the-badge&logo=Bootstrap">
 	</a>
 </p>
 
@@ -35,23 +38,45 @@ Link da base utilizada neste projeto: [SpruceGabriela/genesis-dio].
 ---
 
 Abaixo seguem modificações feitas em relação ao projeto base:
-* Correção e adaptação do `setTimeout` da função `lightColor`;
-* Criado cabeçalho com barra de navegação para controlar o play (início) e demonstrar o recorde;
-* O recorde utiliza o `localStorage` para guardar no navegador, criado também link para limpar o recorde;
-* Adicionados efeitos sonoros para as cores;
-* Aplicado responsividade para a classe `.genius`, utilizando as medidas `vw` e `vh` e `@media only screen and (orientation: portrait)`.
+* Remoção de todos os `alert()` - substituídos por modal elegante com informações detalhadas
+* Criação de círculo no centro do jogo exibindo o nível atual com fonte responsiva
+* Implementação de modal para exibição de Game Over com:
+  - Nível em que o jogador errou
+  - Quantidade de níveis completados com pluralização dinâmica
+  - Seu melhor recorde
+* Correção da lógica de score: só incrementa quando acerta, não quando inicia o nível
+* Refatoração do código JavaScript com constantes para elementos do DOM
+* Integração do Bootstrap 5.3 para melhor estrutura e responsividade
+* Design aprimorado com:
+  - Gradientes suaves nas cores
+  - Efeitos hover melhorados
+  - Animações fluidas (fade-in, slide-up)
+  - Cores mais vibrantes nos botões
+  - Shadows e profundidade visual
+* Responsividade completa:
+  - Mobile-first design (até 576px)
+  - Tablet (577px - 768px)
+  - Desktop (769px+)
+  - Uso de `clamp()` para tipografia fluida
+  - Aspect-ratio responsivo para o jogo circular
+* Uso de CSS Variables para melhor manutenção do código
+* Cabeçalho com barra de navegação para controlar play e demonstrar recorde
+* Recorde utiliza `localStorage` para guardar dados no navegador
+* Efeitos sonoros para as cores
+* Responsividade adaptativa com media queries
 
 ---
 
-Projeto online em: [genius-didi.netlify.app](https://genius-didi.netlify.app)  
+Projeto online em: [genius.zancanela.dev.br](https://genius.zancanela.dev.br)  
 [![Netlify Status](https://api.netlify.com/api/v1/badges/6f4aaf16-8c1f-43a8-bcd6-896631a54fbf/deploy-status)](https://app.netlify.com/sites/genius-didi/deploys)
 
 ---
 
 Links Interessantes:
 * [HTML5]
-* [CSS]
+* [CSS3]
 * [JavaScript]
+* [Bootstrap]
 * [Netlify]
 * [freesound]
 
@@ -60,7 +85,8 @@ Links Interessantes:
 [SpruceGabriela/genesis-dio]: https://github.com/SpruceGabriela/genesis-dio
 [didifive/genesis-dio]: https://github.com/didifive/genesis-dio
 [HTML5]: https://www.w3schools.com/html/
-[CSS]: https://www.w3schools.com/css/
+[CSS3]: https://www.w3schools.com/css/
 [JavaScript]: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Introduction
+[Bootstrap]: https://getbootstrap.com/
 [Netlify]: https://www.netlify.com/
 [freesound]: https://freesound.org/
