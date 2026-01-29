@@ -116,11 +116,14 @@ header .btn:hover {
 }
 
 #score-level {
-    font-size: clamp(2rem, 20vmin, 5rem);
+    font-size: clamp(1.5rem, 12vmin, 3.5rem);
     font-weight: 900;
     color: var(--primary-color);
     text-align: center;
     line-height: 1;
+    width: 85%;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 /* Footer */

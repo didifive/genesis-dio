@@ -127,7 +127,27 @@ let createColorElement = (color) => {
 
 //atualizar exibição do level
 let updateScoreDisplay = () => {
-    scoreLevel.innerHTML = score + 1;
+    const displayValue = score + 1;
+    scoreLevel.innerHTML = displayValue;
+    adjustScoreFontSize(displayValue);
+}
+
+//ajustar tamanho da fonte baseado no número de dígitos
+let adjustScoreFontSize = (value) => {
+    const numDigits = String(value).length;
+    let fontSize;
+    
+    if (numDigits <= 2) {
+        fontSize = 'clamp(1.5rem, 12vmin, 3.5rem)';
+    } else if (numDigits === 3) {
+        fontSize = 'clamp(1.2rem, 10vmin, 2.8rem)';
+    } else if (numDigits === 4) {
+        fontSize = 'clamp(0.9rem, 8vmin, 2rem)';
+    } else {
+        fontSize = 'clamp(0.7rem, 6vmin, 1.5rem)';
+    }
+    
+    scoreLevel.style.fontSize = fontSize;
 }
 
 //mostrar modal com informações do game over
