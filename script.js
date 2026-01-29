@@ -1,3 +1,10 @@
+// Constantes do jogo
+const COLOR_ANIMATION_TIME = 600; // Duração de cada animação de cor (ms)
+const AUDIO_DELAY = 400; // Delay antes de tocar o áudio (ms)
+const CLICK_FEEDBACK_TIME = 250; // Duração do feedback visual do clique (ms)
+const SEQUENCE_END_BUFFER = 200; // Tempo extra após sequência terminar (ms)
+const TOTAL_COLORS = 4; // Número total de cores no jogo
+
 const audio = [
     new Audio('assets/1.mp3')
     , new Audio('assets/2.mp3')
@@ -9,7 +16,7 @@ const audioError = new Audio('assets/error.mp3');
 let order = [];
 let clickedOrder = [];
 let score = 0;
-let record = localStorage.getItem('record');
+let isPlaying = false;
 
 //0 - verde
 //1 - vermelho
@@ -25,23 +32,29 @@ const resetRecord = document.querySelector('#reset');
 
 //cria ordem aletoria de cores
 let shuffleOrder = () => {
-    let colorOrder = Math.floor(Math.random() * 4);
-    order[order.length] = colorOrder;
+    let colorOrder = Math.floor(Math.random() * TOTAL_COLORS);
+    order.push(colorOrder);
     clickedOrder = [];
 
-    for(let i in order) {
+    isPlaying = true;
+    for(let i = 0; i < order.length; i++) {
         let elementColor = createColorElement(order[i]);
-        lightColor(elementColor, Number(i) + 1, order[i]);
+        lightColor(elementColor, i + 1, order[i]);
     }
+    
+    // Libera cliques após sequência terminar
+    setTimeout(() => {
+        isPlaying = false;
+    }, order.length * COLOR_ANIMATION_TIME + SEQUENCE_END_BUFFER);
 }
 
 //acende a proxima cor
 let lightColor = (elementColor, number, color) => {
-    number = number * 600;
+    number = number * COLOR_ANIMATION_TIME;
     setTimeout(() => {
         audio[color].play();
         elementColor.classList.add('selected');
-    }, number - 400);
+    }, number - AUDIO_DELAY);
     setTimeout(() => {
         elementColor.classList.remove('selected');
     }, number);
@@ -49,29 +62,30 @@ let lightColor = (elementColor, number, color) => {
 
 //checa se os botoes clicados são os mesmos da ordem gerada no jogo
 let checkOrder = () => {
-    for(let i in clickedOrder) {
-        if(clickedOrder[i] != order[i]) {
+    for(let i = 0; i < clickedOrder.length; i++) {
+        if(clickedOrder[i] !== order[i]) {
             gameOver();
-            break;
+            return;
         }
     }
-    if(clickedOrder.length == order.length) {
+    if(clickedOrder.length === order.length) {
         alert(`Pontuação atual: ${score}\nVocê acertou! Iniciando próximo nível!`);
-        updateRecord();
         nextLevel();
     }
 }
 
 //funcao para o clique do usuario
 let click = (color) => {
-    clickedOrder[clickedOrder.length] = color;
+    if(isPlaying) return; // Impede cliques durante a sequência
+    
+    clickedOrder.push(color);
     createColorElement(color).classList.add('selected');
     audio[color].play();
 
     setTimeout(() => {
         createColorElement(color).classList.remove('selected');
         checkOrder();
-    },250);
+    }, CLICK_FEEDBACK_TIME);
 }
 
 let control = (control) => {
@@ -111,12 +125,16 @@ let nextLevel = () => {
 
 //funcao para game over
 let gameOver = () => {
+    isPlaying = false;
+    updateRecord();
     audioError.play();
+    const record = localStorage.getItem('record') || 0;
     alert(`Você perdeu o jogo!
             \nPontuação: ${score}!
             \nSeu Recorde: ${record}!
             \nClique em OK para iniciar um novo jogo.`
     );
+    playGame();
 }
 
 //funcao de inicio do jogo
@@ -125,13 +143,18 @@ let playGame = () => {
     order = [];
     clickedOrder = [];
     score = 0;
+    isPlaying = false;
     nextLevel();
 }
 
 //atualizar o Recorde
 let updateRecord = () => {
-    if(score > record) localStorage.setItem('record', score);
-    document.getElementById('record').innerHTML = (record) ? record : 0;
+    const currentRecord = Number.parseInt(localStorage.getItem('record')) || 0;
+    if(score > currentRecord) {
+        localStorage.setItem('record', score);
+    }
+    const record = localStorage.getItem('record') || 0;
+    document.getElementById('record').innerHTML = record;
 }
 
 //eventos de clique para as cores
