@@ -32,8 +32,8 @@ const resetRecord = document.querySelector('#reset');
 
 //cria ordem aletoria de cores
 let shuffleOrder = () => {
-    let colorOrder = Math.floor(Math.random() * TOTAL_COLORS);
-    order.push(colorOrder);
+    let randomColorIndex = Math.floor(Math.random() * TOTAL_COLORS);
+    order.push(randomColorIndex);
     clickedOrder = [];
 
     isPlaying = true;
@@ -95,7 +95,7 @@ let control = (control) => {
             break;
         case 'reset':
             localStorage.clear();
-            updateRecord();
+            document.getElementById('record').innerHTML = 0;
             break;
         default:
             alert('Um erro ocorreu, o game será recarregado!');
