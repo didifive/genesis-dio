@@ -1,52 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>Genesis</title>
 </head>
-<body>
-    <header>
-        <nav>
-            <ul>
-                <li>
-                    <a id="play" href="#">
-                        <span class="icon">
-                            <i class="fas fa-play-circle"></i>
-                        </span>
-                    </a>
-                </li>
-                <li> 
-                    Recorde: <span id="record">0</span>
-                </li> 
-                <li> 
-                    <a id="reset" href="#">
-                        Apagar Recorde
-                    </a>
-                </li>  
-            </ul>
+<body class="d-flex flex-column min-vh-100">
+    <header class="navbar navbar-dark bg-success shadow-sm">
+        <nav class="container-fluid justify-content-around">
+            <a id="play" href="#" class="btn btn-light btn-sm">
+                <i class="fas fa-play-circle me-2"></i>Iniciar
+            </a>
+            <div class="text-white fw-bold">
+                Recorde: <span id="record" class="badge bg-light text-dark">0</span>
+            </div>
+            <a id="reset" href="#" class="btn btn-outline-light btn-sm">
+                Apagar Recorde
+            </a>
         </nav>
     </header>
     
-    <div class="main-game">
-        <div class="genius">
+    <div class="main-game flex-grow-1 d-flex justify-content-center align-items-center">
+        <div class="genius position-relative">
             <div class="blue"></div>
             <div class="yellow"></div>
             <div class="red"></div>
             <div class="green"></div>
+            <div class="score-circle">
+                <span id="score-level">1</span>
+            </div>
         </div>
     </div>
 
-    <footer>
-        <p>
-            Fonte do projeto no GitHub: 
-            <a href="https://github.com/didifive/genesis-dio">
-                didifive/genesis-dio
-            </a>
-            .
-        </p>
+    <footer class="bg-light border-top py-3 mt-auto">
+        <div class="container text-center text-muted">
+            <small>
+                Fonte do projeto no GitHub: 
+                <a href="https://github.com/didifive/genesis-dio" class="text-decoration-none">
+                    didifive/genesis-dio
+                </a>
+            </small>
+        </div>
     </footer>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" class="mb-4">Game Over!</h2>
+            <div class="modal-info">
+                <p class="mb-3">Você errou no <strong>Nível</strong>: <span id="modal-level" class="badge bg-danger">1</span></p>
+                <p class="mb-3" id="modal-completion-text">Ótimo! Completou <strong><span id="modal-score" class="badge bg-success">0</span> nível</strong></p>
+                <p class="mb-4">Seu melhor recorde: <strong><span id="modal-record" class="badge bg-info">0</span></strong></p>
+            </div>
+            <button id="modal-button" class="btn btn-success btn-lg w-100">Novo Jogo</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="script.js"></script>
     <script src="https://kit.fontawesome.com/5eed12a441.js" crossorigin="anonymous"></script>
 </body>

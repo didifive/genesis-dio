@@ -29,6 +29,13 @@ const yellow = document.querySelector('.yellow');
 
 const playButton = document.querySelector('#play');
 const resetRecord = document.querySelector('#reset');
+const modal = document.getElementById('modal');
+const modalButton = document.getElementById('modal-button');
+const scoreLevel = document.getElementById('score-level');
+const modalScore = document.getElementById('modal-score');
+const modalRecord = document.getElementById('modal-record');
+const modalLevel = document.getElementById('modal-level');
+const recordDisplay = document.getElementById('record');
 
 //cria ordem aletoria de cores
 let shuffleOrder = () => {
@@ -69,8 +76,11 @@ let checkOrder = () => {
         }
     }
     if(clickedOrder.length === order.length) {
-        alert(`Pontuação atual: ${score}\nVocê acertou! Iniciando próximo nível!`);
-        nextLevel();
+        score++;
+        updateScoreDisplay();
+        setTimeout(() => {
+            shuffleOrder();
+        }, 500);
     }
 }
 
@@ -95,10 +105,9 @@ let control = (control) => {
             break;
         case 'reset':
             localStorage.clear();
-            document.getElementById('record').innerHTML = 0;
+            recordDisplay.innerHTML = 0;
             break;
         default:
-            alert('Um erro ocorreu, o game será recarregado!');
             location.reload(true);
     }
 }
@@ -111,16 +120,33 @@ let createColorElement = (color) => {
         case 2: return yellow;
         case 3: return blue;
         default: 
-            alert('Um erro ocorreu, o game será recarregado!');
             location.reload(true);
             return;
     }
 }
 
-//funcao para proximo nivel do jogo
-let nextLevel = () => {
-    score++;
-    shuffleOrder();
+//atualizar exibição do level
+let updateScoreDisplay = () => {
+    scoreLevel.innerHTML = score + 1;
+}
+
+//mostrar modal com informações do game over
+let showGameOverModal = () => {
+    const record = localStorage.getItem('record') || 0;
+    const currentLevel = score + 1; // Nível em que errou
+    const nivelText = score === 1 ? 'nível' : 'níveis';
+    
+    modalLevel.innerHTML = currentLevel;
+    modalScore.innerHTML = score; // Níveis completados
+    modalRecord.innerHTML = record;
+    document.getElementById('modal-completion-text').innerHTML = `Ótimo! Completou <strong><span class="badge bg-success">${score}</span> ${nivelText}</strong>`;
+    modal.classList.add('show');
+}
+
+//fechar modal
+let closeGameOverModal = () => {
+    modal.classList.remove('show');
+    playGame();
 }
 
 //funcao para game over
@@ -128,23 +154,19 @@ let gameOver = () => {
     isPlaying = false;
     updateRecord();
     audioError.play();
-    const record = localStorage.getItem('record') || 0;
-    alert(`Você perdeu o jogo!
-            \nPontuação: ${score}!
-            \nSeu Recorde: ${record}!
-            \nClique em OK para iniciar um novo jogo.`
-    );
-    playGame();
+    setTimeout(() => {
+        showGameOverModal();
+    }, 300);
 }
 
 //funcao de inicio do jogo
 let playGame = () => {
-    alert('Bem vindo ao Gênesis! Iniciando novo jogo!');
     order = [];
     clickedOrder = [];
     score = 0;
     isPlaying = false;
-    nextLevel();
+    updateScoreDisplay();
+    shuffleOrder();
 }
 
 //atualizar o Recorde
@@ -154,7 +176,7 @@ let updateRecord = () => {
         localStorage.setItem('record', score);
     }
     const record = localStorage.getItem('record') || 0;
-    document.getElementById('record').innerHTML = record;
+    recordDisplay.innerHTML = record;
 }
 
 //eventos de clique para as cores
@@ -164,6 +186,7 @@ yellow.onclick = () => click(2);
 blue.onclick = () => click(3);
 playButton.onclick = () => control('play');
 resetRecord.onclick = () => control('reset');
+modalButton.onclick = () => closeGameOverModal();
 
 //Evento ao carregar a página
 updateRecord();
