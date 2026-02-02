@@ -1,10 +1,9 @@
-// Constantes do jogo
+// Game Logic Controller
 const COLOR_ANIMATION_TIME = 700; // Duração de cada animação de cor (ms)
 const AUDIO_DELAY = 400; // Delay antes de tocar o áudio (ms)
 const CLICK_FEEDBACK_TIME = 350; // Duração do feedback visual do clique (ms)
 const SEQUENCE_END_BUFFER = 200; // Tempo extra após sequência terminar (ms)
 const NEXT_LEVEL_DELAY = 500; // Delay antes de iniciar próximo nível (ms)
-const GAME_OVER_MODAL_DELAY = 300; // Delay antes de mostrar modal de game over (ms)
 const TOTAL_COLORS = 4; // Número total de cores no jogo
 
 // Constantes para tamanho da fonte
@@ -23,12 +22,12 @@ const getRandomColor = () => {
 };
 
 const audio = [
-    new Audio('assets/1.mp3')
-    , new Audio('assets/2.mp3')
-    , new Audio('assets/3.mp3')
-    , new Audio('assets/4.mp3')
+    new Audio('assets/audio/1.mp3')
+    , new Audio('assets/audio/2.mp3')
+    , new Audio('assets/audio/3.mp3')
+    , new Audio('assets/audio/4.mp3')
 ];
-const audioError = new Audio('assets/error.mp3');
+const audioError = new Audio('assets/audio/error.mp3');
 
 let order = [];
 let clickedOrder = [];
@@ -44,14 +43,7 @@ const red = document.querySelector('.red');
 const green = document.querySelector('.green');
 const yellow = document.querySelector('.yellow');
 
-const playButton = document.querySelector('#play');
-const resetRecord = document.querySelector('#reset');
-const modal = document.getElementById('modal');
-const modalButton = document.getElementById('modal-button');
 const scoreLevel = document.getElementById('score-level');
-const modalScore = document.getElementById('modal-score');
-const modalRecord = document.getElementById('modal-record');
-const modalLevel = document.getElementById('modal-level');
 const recordDisplay = document.getElementById('record');
 
 //cria ordem aletoria de cores
@@ -115,20 +107,6 @@ let click = (color) => {
     }, CLICK_FEEDBACK_TIME);
 }
 
-let control = (control) => {
-    switch (control) {
-        case 'play':
-            playGame();
-            break;
-        case 'reset':
-            localStorage.clear();
-            recordDisplay.innerHTML = 0;
-            break;
-        default:
-            location.reload(true);
-    }
-}
-
 //funcao que retorna a cor
 let createColorElement = (color) => {
     switch (color) {
@@ -167,32 +145,13 @@ let adjustScoreFontSize = (value) => {
     scoreLevel.style.fontSize = fontSize;
 }
 
-//mostrar modal com informações do game over
-let showGameOverModal = () => {
-    const record = localStorage.getItem('record') || 0;
-    const currentLevel = score + 1; // Nível em que errou
-    const nivelText = score === 1 ? 'nível' : 'níveis';
-    
-    modalLevel.innerHTML = currentLevel;
-    modalScore.innerHTML = score; // Níveis completados
-    modalRecord.innerHTML = record;
-    document.getElementById('modal-completion-text').innerHTML = `Ótimo! Completou <strong><span class="badge bg-success">${score}</span> ${nivelText}</strong>`;
-    modal.classList.add('show');
-}
-
-//fechar modal
-let closeGameOverModal = () => {
-    modal.classList.remove('show');
-    playGame();
-}
-
 //funcao para game over
 let gameOver = () => {
     isPlaying = true; // Bloqueia cliques novamente
     updateRecord();
     audioError.play();
     setTimeout(() => {
-        showGameOverModal();
+        showGameOverModal(score);
     }, GAME_OVER_MODAL_DELAY);
 }
 
@@ -220,9 +179,31 @@ green.onclick = () => click(0);
 red.onclick = () => click(1);
 yellow.onclick = () => click(2);
 blue.onclick = () => click(3);
+
+// ========================================
+// CONTROLES DO JOGO
+// ========================================
+
+const playButton = document.querySelector('#play');
+const resetRecord = document.querySelector('#reset');
+
+let control = (control) => {
+    switch (control) {
+        case 'play':
+            playGame();
+            break;
+        case 'reset':
+            localStorage.clear();
+            recordDisplay.innerHTML = 0;
+            break;
+        default:
+            location.reload(true);
+    }
+}
+
+// Eventos dos botões de controle
 playButton.onclick = () => control('play');
 resetRecord.onclick = () => control('reset');
-modalButton.onclick = () => closeGameOverModal();
 
 //Evento ao carregar a página
 updateRecord();
