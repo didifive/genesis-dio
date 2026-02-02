@@ -8,7 +8,7 @@ const modalLevel = document.getElementById('modal-level');
 // Constante para delay do modal
 const GAME_OVER_MODAL_DELAY = 300; // Delay antes de mostrar modal de game over (ms)
 
-//mostrar modal com informações do game over
+// Mostrar modal com informações do game over
 let showGameOverModal = (score) => {
     const record = localStorage.getItem('record') || 0;
     const currentLevel = score + 1; // Nível em que errou
@@ -21,10 +21,14 @@ let showGameOverModal = (score) => {
     modal.classList.add('show');
 }
 
-//fechar modal
-let closeGameOverModal = () => {
+// Fechar modal
+const closeGameOverModal = () => {
     modal.classList.remove('show');
-    playGame();
+    if (typeof playGame === 'function') {
+        playGame();
+    } else {
+        console.error('playGame is not defined or not a function. Unable to restart the game from the modal.');
+    }
 }
 
 // Event listener para o botão do modal

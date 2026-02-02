@@ -47,7 +47,7 @@ const scoreLevel = document.getElementById('score-level');
 const recordDisplay = document.getElementById('record');
 
 //cria ordem aletoria de cores
-let shuffleOrder = () => {
+const shuffleOrder = () => {
     let randomColorIndex = getRandomColor();
     order.push(randomColorIndex);
     clickedOrder = [];
@@ -152,7 +152,7 @@ let gameOver = () => {
     audioError.play();
     setTimeout(() => {
         showGameOverModal(score);
-    }, GAME_OVER_MODAL_DELAY);
+    }, NEXT_LEVEL_DELAY);
 }
 
 //funcao de inicio do jogo
