@@ -33,6 +33,10 @@ let order = [];
 let clickedOrder = [];
 let score = 0;
 let isPlaying = true; // Controla se está tocando sequência ou se jogo não foi iniciado (bloqueia cliques)
+let sequenceTimeouts = []; // Array para armazenar timeouts da sequência
+let unlockTimeout = null; // Timeout para desbloquer cliques
+let isProcessingClick = false; // Impede cliques duplos/rápidos
+let nextLevelTimeout = null; // Timeout para iniciar próximo nível
 
 //0 - verde
 //1 - vermelho
@@ -48,9 +52,18 @@ const recordDisplay = document.getElementById('record');
 
 //cria ordem aletoria de cores
 const shuffleOrder = () => {
+    // Cancela timeouts anteriores
+    sequenceTimeouts.forEach(timeout => clearTimeout(timeout));
+    sequenceTimeouts = [];
+    if(unlockTimeout) {
+        clearTimeout(unlockTimeout);
+        unlockTimeout = null;
+    }
+    
     let randomColorIndex = getRandomColor();
     order.push(randomColorIndex);
     clickedOrder = [];
+    isProcessingClick = false; // Reset flag ao iniciar nova sequência
 
     isPlaying = true;
     for(let i = 0; i < order.length; i++) {
@@ -59,21 +72,25 @@ const shuffleOrder = () => {
     }
     
     // Libera cliques após sequência terminar
-    setTimeout(() => {
+    unlockTimeout = setTimeout(() => {
         isPlaying = false;
+        unlockTimeout = null;
     }, order.length * COLOR_ANIMATION_TIME + SEQUENCE_END_BUFFER);
 }
 
 //acende a proxima cor
 let lightColor = (elementColor, number, color) => {
     number = number * COLOR_ANIMATION_TIME;
-    setTimeout(() => {
+    const timeout1 = setTimeout(() => {
         audio[color].play();
         elementColor.classList.add('selected');
     }, number - AUDIO_DELAY);
-    setTimeout(() => {
+    const timeout2 = setTimeout(() => {
         elementColor.classList.remove('selected');
     }, number);
+    
+    // Armazena os timeouts para poder cancelá-los se necessário
+    sequenceTimeouts.push(timeout1, timeout2);
 }
 
 //checa se os botoes clicados são os mesmos da ordem gerada no jogo
@@ -85,18 +102,21 @@ let checkOrder = () => {
         }
     }
     if(clickedOrder.length === order.length) {
+        isPlaying = true; // Bloqueia cliques após completar sequência
         score++;
         updateScoreDisplay();
-        setTimeout(() => {
+        nextLevelTimeout = setTimeout(() => {
             shuffleOrder();
+            nextLevelTimeout = null;
         }, NEXT_LEVEL_DELAY);
     }
 }
 
 //funcao para o clique do usuario
 let click = (color) => {
-    if(isPlaying) return; // Impede cliques enquanto sequência toca ou jogo não iniciou
+    if(isPlaying || isProcessingClick) return; // Impede cliques enquanto sequência toca ou clique sendo processado
     
+    isProcessingClick = true; // Bloqueia novos cliques
     clickedOrder.push(color);
     createColorElement(color).classList.add('selected');
     audio[color].play();
@@ -104,6 +124,7 @@ let click = (color) => {
     setTimeout(() => {
         createColorElement(color).classList.remove('selected');
         checkOrder();
+        isProcessingClick = false; // Libera para próximo clique
     }, CLICK_FEEDBACK_TIME);
 }
 
@@ -148,6 +169,13 @@ let adjustScoreFontSize = (value) => {
 //funcao para game over
 let gameOver = () => {
     isPlaying = true; // Bloqueia cliques novamente
+    
+    // Cancela timeout do próximo nível se existir
+    if(nextLevelTimeout) {
+        clearTimeout(nextLevelTimeout);
+        nextLevelTimeout = null;
+    }
+    
     updateRecord();
     audioError.play();
     setTimeout(() => {
@@ -157,9 +185,22 @@ let gameOver = () => {
 
 //funcao de inicio do jogo
 let playGame = () => {
+    // Cancela todos os timeouts pendentes
+    sequenceTimeouts.forEach(timeout => clearTimeout(timeout));
+    sequenceTimeouts = [];
+    if(unlockTimeout) {
+        clearTimeout(unlockTimeout);
+        unlockTimeout = null;
+    }
+    if(nextLevelTimeout) {
+        clearTimeout(nextLevelTimeout);
+        nextLevelTimeout = null;
+    }
+    
     order = [];
     clickedOrder = [];
     score = 0;
+    isProcessingClick = false; // Reset flag de processamento
     updateScoreDisplay();
     shuffleOrder();
 }
